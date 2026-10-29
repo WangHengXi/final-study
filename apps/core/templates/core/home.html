@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StudyTrack｜各科學習管理與錯題追蹤</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --paper: #f8f6fa;
+      --ink: #393741;
+      --muted: #77717e;
+      --line: #e4dfe8;
+      --pink: #ead1d7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.8;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    button { font: inherit; cursor: pointer; }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid #82748e;
+      outline-offset: 5px;
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 40px));
+      margin: auto;
+    }
+
+    .brand {
+      font-family: Georgia, serif;
+      font-size: 25px;
+      letter-spacing: -1px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 24px;
+      padding: 12px 25px;
+      background: var(--pink);
+      border: 1px solid #dcbfc7;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .2s;
+    }
+
+    .button:hover { background: #dfbcc6; }
+
+    .eyebrow {
+      color: #82748e;
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .stage {
+      height: 400px;
+      overflow: hidden;
+      padding: 28px 16px 0;
+      border-radius: 12px;
+      background: #ece7f0;
+    }
+
+    .feature:nth-child(2) .stage { background: #f0e7eb; }
+    .feature:nth-child(3) .stage { background: #e7ece9; }
+
+    .phone {
+      max-width: 255px;
+      min-height: 420px;
+      margin: auto;
+      padding: 12px 16px 25px;
+      background: #fcfbfd;
+      border: 5px solid white;
+      border-radius: 28px 28px 0 0;
+      box-shadow: 0 10px 24px #5c486314;
+      font-size: 11px;
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      font-size: 9px;
+    }
+
+    .phone h3 { font-size: 20px; font-weight: 600; }
+
+    .muted { color: var(--muted); }
+
+    .subject {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .subject strong { font-size: 13px; }
+
+    .subject p { font-size: 10px; color: var(--muted); }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      background: #ece7f2;
+      color: #695678;
+    }
+
+    .tag-pink { background: #f0e0e5; color: #885c6a; }
+    .tag-green { background: #e3ece5; color: #526c59; }
+
+    .question {
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: white;
+    }
+
+    .question strong {
+      display: block;
+      margin: 5px 0;
+      font-size: 12px;
+    }
+
+    .question p { margin: 8px 0; font-size: 10px; }
+
+    .controls { display: none; }
+
+    .arrow {
+      width: 44px;
+      height: 44px;
+      border: 1px solid #d6cddc;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .dot {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 44px;
+      border: 0;
+      background: transparent;
+    }
+
+    .dot::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d5cdda;
+    }
+
+    .dot[aria-current="true"]::before {
+      width: 22px;
+      border-radius: 8px;
+      background: #887591;
+    }
+
+    #steps { scroll-margin-top: 30px; }
+
+    @media (max-width: 767px) {
+      .features { display: block; }
+      .feature[hidden] { display: none; }
+      .controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="flex items-center justify-between border-b border-[#e4dfe8] py-6">
+      <a href="#" class="brand">StudyTrack</a>
+      <span class="text-xs muted">讓每一次練習，都有累積。</span>
+    </header>
+
+    <main>
+      <section class="text-center py-20 md:py-28">
+        <p class="eyebrow mb-6">YOUR LEARNING, IN ORDER</p>
+        <h1 class="text-3xl md:text-5xl font-semibold leading-relaxed">
+          各科學習管理與錯題追蹤
+        </h1>
+        <p class="muted text-sm md:text-base mt-6 mb-8">
+          整理每一道錯題，記錄每一次練習，看見自己的進步
+        </p>
+        <a href="#steps" class="button" data-start>
+          開始使用 <span aria-hidden="true">→</span>
+        </a>
+        <p class="muted text-xs mt-6">
+          從數學到英文，為每一科留一個位置。
+        </p>
+      </section>
+
+      <section class="grid md:grid-cols-2 gap-6 md:gap-16 items-center border-y border-[#e4dfe8] py-12">
+        <div>
+          <p class="eyebrow mb-3">A LITTLE LESS CHAOS</p>
+          <h2 class="text-2xl font-medium">
+            科目這麼多，<br>複習總是沒頭緒？
+          </h2>
+        </div>
+        <p class="muted text-sm">
+          各科的題目與教材分散在課本、講義和筆記中，容易忘記錯誤原因，
+          也難以確認哪些觀念已經熟悉、哪些題目還需要複習。
+          StudyTrack 幫助你集中整理，掌握每一科的學習進度。
+        </p>
+      </section>
+
+      <section class="py-16 md:py-20" aria-labelledby="features-title">
+        <p class="eyebrow mb-3">A PLACE FOR EVERY SUBJECT</p>
+        <h2 id="features-title" class="text-2xl md:text-3xl font-medium mb-9">
+          把學習，整理成自己的節奏。
+        </h2>
+
+        <div class="features" id="features">
+          <article class="feature" id="feature-1">
+            <div class="stage">
+              <div class="phone">
+                <div class="status"><span>9:41</span><span>••• ▰</span></div>
+                <p class="muted text-[10px]">我的學習空間</p>
+                <h3>所有課程</h3>
+                <p class="muted text-[10px]">4 個科目，各自慢慢進步。</p>
+
+                <div class="subject">
+                  <strong>∑　數學</strong>
+                  <p>二次函數 · 三角函數</p>
+                </div>
+                <div class="subject">
+                  <strong>Aa　英文</strong>
+                  <p>關係代名詞 · 時態</p>
+                </div>
+                <div class="subject">
+                  <strong>σ　統計學</strong>
+                  <p>機率分布 · 假設檢定</p>
+                </div>
+                <div class="subject">
+                  <strong>{ }　程式設計</strong>
+                  <p>條件判斷 · 迴圈</p>
+                </div>
+                <div class="text-center border border-dashed border-[#c8bed0] rounded-md p-2 mt-4 muted">
+                  ＋ 新增科目
+                </div>
+              </div>
+            </div>
+            <div class="pt-6">
+              <p class="eyebrow mb-2">01 / ORGANIZE</p>
+              <h3 class="text-xl font-medium mb-2">課程與章節管理</h3>
+              <p class="muted text-sm">
+                依照自己的課表建立科目與章節。不同領域的學習，都能有條理地收好。
+              </p>
+            </div>
+          </article>
+
+          <article class="feature" id="feature-2">
+            <div class="stage">
+              <div class="phone">
+                <div class="status"><span>9:41</span><span>••• ▰</span></div>
+                <p class="muted text-[10px]">把不熟悉，練成會</p>
+                <h3>我的錯題本</h3>
+                <div class="flex gap-1 mt-3">
+                  <span class="tag">新題目</span>
+                  <span class="tag tag-pink">待複習</span>
+                  <span class="tag tag-green">已熟練</span>
+                </div>
+
+                <div class="question">
+                  <span class="muted">數學 / 二次函數</span>
+                  <strong>配方法求函數最小值</strong>
+                  <span class="tag tag-pink">待複習</span>
+                  <p class="muted">錯誤原因：配方時忘記扣回新增的常數。</p>
+                  <div class="flex justify-between text-[9px] muted">
+                    <span>重做 10/28</span><span>結果：答錯</span>
+                  </div>
+                </div>
+
+                <div class="question">
+                  <span class="muted">英文 / 關係代名詞</span>
+                  <strong>who 與 which 的用法</strong>
+                  <span class="tag tag-green">已熟練</span>
+                  <p class="muted">錯誤原因：未先確認先行詞是人或物。</p>
+                  <div class="flex justify-between text-[9px] muted">
+                    <span>重做 10/29</span><span>結果：答對</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pt-6">
+              <p class="eyebrow mb-2">02 / PRACTICE</p>
+              <h3 class="text-xl font-medium mb-2">錯題與重做紀錄</h3>
+              <p class="muted text-sm">
+                留下錯誤原因，也記下每次重做的結果。下一次複習，從真正不熟的地方開始。
+              </p>
+            </div>
+          </article>
+
+          <article class="feature" id="feature-3">
+            <div class="stage">
+              <div class="phone">
+                <div class="status"><span>9:41</span><span>••• ▰</span></div>
+                <p class="muted text-[10px]">每一步，都算數</p>
+                <h3>學習進度</h3>
+
+                <label for="subject" class="sr-only">示意科目篩選</label>
+                <select id="subject" disabled class="w-full border rounded-md p-2 my-3 bg-white">
+                  <option>全部科目</option>
+                  <option>數學</option>
+                  <option>英文</option>
+                  <option>統計學</option>
+                  <option>程式設計</option>
+                </select>
+
+                <p class="muted">本週重做正確率</p>
+                <p class="text-4xl text-[#697d72] my-2">85<span class="text-sm"> %</span></p>
+
+                <svg viewBox="0 0 220 120" role="img"
+                  aria-label="示意折線圖：四週正確率依序為45%、60%、55%、85%"
+                  class="w-full">
+                  <g stroke="#e4e6e3" stroke-dasharray="3 4">
+                    <path d="M30 15H210 M30 50H210 M30 85H210"/>
+                  </g>
+                  <g fill="#77717e" font-size="8">
+                    <text x="0" y="18">100%</text>
+                    <text x="5" y="53">50%</text>
+                    <text x="12" y="88">0%</text>
+                    <text x="28" y="108">第1週</text>
+                    <text x="80" y="108">第2週</text>
+                    <text x="132" y="108">第3週</text>
+                    <text x="184" y="108">第4週</text>
+                  </g>
+                  <path d="M36 53.5 L88 43 L140 46.5 L196 25.5"
+                    fill="none" stroke="#7d9385" stroke-width="3"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                  <g fill="#7d9385">
+                    <circle cx="36" cy="53.5" r="4"/>
+                    <circle cx="88" cy="43" r="4"/>
+                    <circle cx="140" cy="46.5" r="4"/>
+                    <circle cx="196" cy="25.5" r="4"/>
+                  </g>
+                </svg>
+
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                  <div class="bg-[#f0f3f0] rounded-md p-3">
+                    <p class="muted">待複習</p>
+                    <p class="text-2xl">12 <span class="text-xs">題</span></p>
+                  </div>
+                  <div class="bg-[#f0f3f0] rounded-md p-3">
+                    <p class="muted">已熟練</p>
+                    <p class="text-2xl">38 <span class="text-xs">題</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pt-6">
+              <p class="eyebrow mb-2">03 / REFLECT</p>
+              <h3 class="text-xl font-medium mb-2">學習進度分析</h3>
+              <p class="muted text-sm">
+                從各科的題目狀態與正確率走勢，看見進步，也找到下一次複習的方向。
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <div class="controls">
+          <button type="button" id="prev" class="arrow"
+            aria-label="上一張功能卡片" aria-controls="features">←</button>
+          <div class="flex" aria-label="選擇功能卡片">
+            <button type="button" class="dot" aria-label="第1張：課程與章節管理"
+              aria-controls="feature-1" aria-current="true"></button>
+            <button type="button" class="dot" aria-label="第2張：錯題與重做紀錄"
+              aria-controls="feature-2" aria-current="false"></button>
+            <button type="button" class="dot" aria-label="第3張：學習進度分析"
+              aria-controls="feature-3" aria-current="false"></button>
+          </div>
+          <button type="button" id="next" class="arrow"
+            aria-label="下一張功能卡片" aria-controls="features">→</button>
+        </div>
+
+        <p id="announcement" class="sr-only" aria-live="polite"></p>
+        <p class="muted text-xs text-center mt-7">畫面、題目與數據均為功能示意。</p>
+      </section>
+
+      <section id="steps" tabindex="-1" class="border-t border-[#e4dfe8] py-16">
+        <p class="eyebrow mb-3">START SMALL, KEEP GOING</p>
+        <h2 class="text-2xl md:text-3xl font-medium">三步驟開始使用</h2>
+
+        <div class="grid md:grid-cols-3 gap-9 mt-10">
+          <div>
+            <p class="text-4xl text-[#b1a2ba] font-serif italic mb-4">01</p>
+            <h3 class="text-lg font-medium mb-2">建立課程</h3>
+            <p class="muted text-sm">依照學習需求新增科目，並建立各科章節。</p>
+          </div>
+          <div>
+            <p class="text-4xl text-[#b1a2ba] font-serif italic mb-4">02</p>
+            <h3 class="text-lg font-medium mb-2">整理錯題</h3>
+            <p class="muted text-sm">加入題目、記下錯誤原因，並記錄每次重做結果。</p>
+          </div>
+          <div>
+            <p class="text-4xl text-[#b1a2ba] font-serif italic mb-4">03</p>
+            <h3 class="text-lg font-medium mb-2">追蹤進度</h3>
+            <p class="muted text-sm">查看各科題目狀態與練習走勢，安排下一次複習。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="text-center bg-[#eee8f1] border border-[#e4dce9] rounded-xl px-5 py-14 mb-14">
+        <p class="eyebrow mb-5">ONE QUESTION AT A TIME</p>
+        <h2 class="text-2xl md:text-3xl font-medium">
+          準備好讓每次練習都有累積了嗎？
+        </h2>
+        <p class="muted text-sm mt-4 mb-7">
+          從一個科目、一道錯題開始，逐步建立自己的學習紀錄。
+        </p>
+        <a href="#steps" class="button" data-start>
+          開始使用 <span aria-hidden="true">→</span>
+        </a>
+      </section>
+    </main>
+
+    <footer class="flex flex-col md:flex-row justify-between gap-2 border-t border-[#e4dfe8] py-7">
+      <span class="brand text-xl">StudyTrack</span>
+      <span class="muted text-xs">好好整理，慢慢進步。｜功能介紹示意首頁</span>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const cards = [...document.querySelectorAll(".feature")];
+      const dots = [...document.querySelectorAll(".dot")];
+      const mobile = window.matchMedia("(max-width: 767px)");
+      let index = 0;
+
+      function render(announce = false) {
+        cards.forEach((card, i) => {
+          card.hidden = mobile.matches && i !== index;
+        });
+
+        dots.forEach((dot, i) => {
+          dot.setAttribute("aria-current", String(i === index));
+        });
+
+        if (announce) {
+          document.getElementById("announcement").textContent =
+            `第 ${index + 1} 張，共 ${cards.length} 張：` +
+            cards[index].querySelector("h3.text-xl").textContent;
+        }
+      }
+
+      function go(nextIndex) {
+        index = (nextIndex + cards.length) % cards.length;
+        render(true);
+      }
+
+      document.getElementById("prev").addEventListener("click", () => go(index - 1));
+      document.getElementById("next").addEventListener("click", () => go(index + 1));
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => go(i));
+      });
+
+      mobile.addEventListener("change", () => render());
+
+      document.querySelectorAll("[data-start]").forEach(link => {
+        link.addEventListener("click", event => {
+          event.preventDefault();
+          const target = document.getElementById("steps");
+          const reducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+          ).matches;
+
+          target.focus({ preventScroll: true });
+          target.scrollIntoView({
+            behavior: reducedMotion ? "auto" : "smooth",
+            block: "start"
+          });
+        });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
