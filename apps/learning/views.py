@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
@@ -7,7 +8,7 @@ from .models import Course
 class CourseListView(View):
     def get(self, request):
         keyword = request.GET.get("q", "").strip()
-        courses = Course.objects.all()
+        courses = Course.objects.select_related("owner")
 
         if keyword:
             courses = courses.filter(name__icontains=keyword)
@@ -23,20 +24,22 @@ class CourseDetailView(View):
     def get(self, request, course_id):
         course = get_object_or_404(
             Course.objects.select_related(
-                "learning_setting"
+                "learning_setting",
+                "owner",
             ).prefetch_related(
                 "chapters",
                 "chapters__questions__tags",
             ),
             id=course_id,
         )
+
         return render(
             request,
             "learning/course_detail.html",
             {"course": course},
         )
 
-class CourseCreateView(View):
+class CourseCreateView(LoginRequiredMixin, View):
     template_name = "learning/course_form.html"
 
     def get(self, request):
@@ -78,7 +81,11 @@ class CourseCreateView(View):
                 status=400,
             )
 
-        course = Course.objects.create(name=name, code=code)
+        course = Course.objects.create(
+            name=name,
+            code=code,
+            owner=request.user,
+        )
 
         return redirect(
             "learning:course-detail",

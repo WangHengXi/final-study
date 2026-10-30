@@ -1,12 +1,17 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
+from django.conf import settings
 
 class Course(models.Model):
     name = models.CharField(max_length=100, verbose_name="課程名稱")
     code = models.CharField(max_length=12, unique=True, verbose_name="課程代碼")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
-
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="owned_courses",
+        verbose_name="課程建立者",
+    )
     class Meta:
         verbose_name = "課程"
         verbose_name_plural = "課程"
