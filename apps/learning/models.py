@@ -3,19 +3,35 @@ from django.db import models
 from django.conf import settings
 
 class Course(models.Model):
-    name = models.CharField(max_length=100, verbose_name="課程名稱")
-    code = models.CharField(max_length=12, unique=True, verbose_name="課程代碼")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
+    name = models.CharField(
+        max_length=100,
+        verbose_name="課程名稱",
+    )
+    code = models.CharField(
+        max_length=12,
+        verbose_name="課程代碼",
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="owned_courses",
         verbose_name="課程建立者",
     )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="建立時間",
+    )
+
     class Meta:
         verbose_name = "課程"
         verbose_name_plural = "課程"
         ordering = ("-created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["owner", "code"],
+                name="unique_course_code_per_owner",
+            ),
+        ]
 
     def __str__(self):
         return self.name

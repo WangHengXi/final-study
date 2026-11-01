@@ -12,179 +12,280 @@
         background: #f8f6fa;
         color: #393741;
         font-family: system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+          "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
       }
 
       .paper-card {
-        background: rgba(255, 253, 255, .9);
+        background: rgba(255, 255, 255, .9);
         border: 1px solid #e4dfe8;
-        box-shadow: 0 12px 36px rgba(71, 55, 83, .05);
+        box-shadow: 0 12px 36px rgba(65, 48, 75, .04);
       }
 
-      a:focus-visible {
-        outline: 3px solid #82748e;
-        outline-offset: 5px;
+      input:focus-visible,
+      a:focus-visible,
+      button:focus-visible {
+        outline: 2px solid #82748e;
+        outline-offset: 3px;
       }
     </style>
   </head>
 
   <body class="min-h-screen">
-    <main class="mx-auto max-w-4xl px-6 py-16 sm:px-10 sm:py-24">
-      <a
-        href="{% url 'learning:course-list' %}"
-        class="inline-flex items-center gap-2 text-sm font-semibold
-          text-[#77717e] hover:text-[#82748e]"
-      >
+    <main class="mx-auto max-w-4xl px-5 py-12 sm:px-10 sm:py-20">
+      <a href="{% url 'learning:course-list' %}"
+         class="inline-flex items-center gap-2 text-sm font-bold text-[#756380] hover:underline">
         <span aria-hidden="true">←</span>
         回到課程列表
       </a>
 
-      <section class="paper-card mt-6 rounded-[28px] p-6 sm:p-10">
+      <section class="paper-card mt-6 min-w-0 rounded-3xl p-5 sm:p-10">
 
         <!-- 課程標題 -->
-        <div class="flex flex-col gap-6 border-b border-[#e4dfe8] pb-8
-          sm:flex-row sm:items-end sm:justify-between">
+        <header class="flex flex-col gap-6 border-b border-[#e4dfe8] pb-8 sm:flex-row sm:items-end sm:justify-between">
           <div class="min-w-0">
             <p class="text-sm font-bold tracking-widest text-[#82748e]">
               我的課程
             </p>
-            <h1 class="mt-3 break-words text-3xl font-bold sm:text-5xl">
+
+            <h1 class="mt-3 break-words text-3xl font-black sm:text-5xl">
               {{ course.name }}
             </h1>
-            <p class="mt-3 text-sm font-bold text-[#6f6777]">
-                建立者：{{ course.owner.profile.display_name|default:course.owner.username }}
+
+            <p class="mt-3 break-words text-sm font-bold text-[#6f6777]">
+              建立者：{{ course.owner.profile.display_name|default:course.owner.username }}
             </p>
           </div>
 
-          <span class="w-fit break-all rounded-full border
-            border-[#dfd5e5] bg-[#eee8f2] px-4 py-2
-            font-mono text-sm font-bold text-[#776381]">
+          <span class="w-fit max-w-full break-all rounded-full border border-[#ded7e4] bg-[#eee8f2] px-5 py-2 font-mono font-bold text-[#756380]">
             {{ course.code }}
           </span>
-        </div>
+        </header>
 
-        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        <div class="mt-8 grid min-w-0 gap-5 sm:grid-cols-2">
 
           <!-- 課程代碼 -->
-          <article class="rounded-2xl border border-[#e4dfe8] bg-white/60 p-5">
-            <h2 class="text-sm font-medium text-[#77717e]">課程代碼</h2>
+          <article class="min-w-0 rounded-2xl border border-[#e4dfe8] bg-white p-5">
+            <h2 class="text-sm font-bold text-[#6f6777]">
+              課程代碼
+            </h2>
+
             <p class="mt-3 break-all font-mono text-xl font-bold">
               {{ course.code }}
             </p>
           </article>
 
           <!-- 建立時間 -->
-          <article class="rounded-2xl border border-[#e4dfe8] bg-white/60 p-5">
-            <h2 class="text-sm font-medium text-[#77717e]">建立時間</h2>
-            <p class="mt-3 font-semibold">
+          <article class="min-w-0 rounded-2xl border border-[#e4dfe8] bg-white p-5">
+            <h2 class="text-sm font-bold text-[#6f6777]">
+              建立時間
+            </h2>
+
+            <p class="mt-3 font-bold">
               {{ course.created_at|date:"Y 年 n 月 j 日 H:i" }}
             </p>
           </article>
 
           <!-- 課程學習設定 -->
-          <article class="rounded-2xl border border-[#dfd5e5]
-            bg-[#eee8f2]/50 p-5 sm:col-span-2">
-            <h2 class="text-lg font-bold">課程學習設定</h2>
+          <article class="min-w-0 rounded-2xl border border-[#ded7e4] bg-[#f8f6fa] p-5 sm:col-span-2">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h2 class="text-lg font-bold">課程學習設定</h2>
+
+              {% if user.is_authenticated and user.id == course.owner_id %}
+                <a href="{% url 'learning:course-setting' course.id %}"
+                   class="rounded-full bg-[#ead1d7] px-4 py-2 text-sm font-bold text-[#51404a] hover:bg-[#dfbec7]">
+                  {% if course.learning_setting %}
+                    修改設定
+                  {% else %}
+                    ＋ 建立設定
+                  {% endif %}
+                </a>
+              {% endif %}
+            </div>
 
             {% if course.learning_setting %}
-              <div class="mt-5 grid gap-5 sm:grid-cols-2">
+              <dl class="mt-4 grid gap-4 sm:grid-cols-2">
                 <div>
-                  <p class="text-sm text-[#77717e]">目標正確率</p>
-                  <p class="mt-2 text-3xl font-bold text-[#82748e]">
-                    {{ course.learning_setting.target_accuracy }}
-                    <span class="text-base">%</span>
-                  </p>
+                  <dt class="text-sm text-[#6f6777]">目標正確率</dt>
+                  <dd class="mt-2 text-xl font-bold text-[#756380]">
+                    {{ course.learning_setting.target_accuracy }}%
+                  </dd>
                 </div>
 
                 <div>
-                  <p class="text-sm text-[#77717e]">複習間隔</p>
-                  <p class="mt-2 text-3xl font-bold text-[#82748e]">
-                    {{ course.learning_setting.review_interval }}
-                    <span class="text-base">天</span>
-                  </p>
+                  <dt class="text-sm text-[#6f6777]">複習間隔</dt>
+                  <dd class="mt-2 text-xl font-bold text-[#756380]">
+                    {{ course.learning_setting.review_interval }} 天
+                  </dd>
                 </div>
-              </div>
+              </dl>
             {% else %}
-              <p class="mt-3 font-semibold">尚未建立學習設定</p>
-              <p class="mt-2 text-sm leading-6 text-[#77717e]">
-                可在管理後台新增「課程學習設定」，選擇這門課，
-                並填入目標正確率與複習間隔。
+              <p class="mt-4 font-bold text-[#6f6777]">
+                尚未建立學習設定
+              </p>
+
+              <p class="mt-2 text-sm leading-7 text-[#6f6777]">
+                點選「＋ 建立設定」，設定這門課程的目標正確率與複習間隔。
               </p>
             {% endif %}
           </article>
 
-          <!-- 章節列表 -->
-          <article class="rounded-2xl border border-[#e4dfe8]
-            bg-white/60 p-5 sm:col-span-2">
-            <div class="flex items-center justify-between gap-4">
-              <h2 class="text-lg font-bold">章節列表</h2>
-              <span class="rounded-full bg-[#eee8f2] px-3 py-1
-                text-sm font-bold text-[#776381]">
+          <!-- 章節管理 -->
+          <article class="min-w-0 rounded-2xl border border-[#e4dfe8] bg-white p-5 sm:col-span-2">
+            <div class="flex items-center justify-between gap-3">
+              <h2 class="text-xl font-bold">章節列表</h2>
+
+              <span class="shrink-0 rounded-full bg-[#eee8f2] px-4 py-1 text-sm font-bold text-[#756380]">
                 {{ course.chapters.all|length }} 章
               </span>
             </div>
 
-            <ul class="mt-4 divide-y divide-[#e4dfe8]">
+            {% if user.is_authenticated and user.id == course.owner_id %}
+              <form method="post"
+                    action="{% url 'learning:chapter-create' course.id %}"
+                    class="mt-5 rounded-2xl border border-[#e4dfe8] bg-[#f8f6fa] p-4 sm:p-5">
+                {% csrf_token %}
+
+                <h3 class="font-bold">新增章節</h3>
+
+                {% if chapter_error %}
+                  <p role="alert"
+                     class="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {{ chapter_error }}
+                  </p>
+                {% endif %}
+
+                <div class="mt-4 grid gap-4 sm:grid-cols-3">
+                  <div class="min-w-0 sm:col-span-2">
+                    <label for="chapter-name"
+                           class="block text-sm font-bold text-[#6f6777]">
+                      章節名稱
+                    </label>
+
+                    <input id="chapter-name"
+                           name="name"
+                           type="text"
+                           value="{{ chapter_name|default:'' }}"
+                           placeholder="例如：機率與分布"
+                           maxlength="100"
+                           required
+                           class="mt-2 w-full rounded-xl border border-[#ded7e4] bg-white px-4 py-3">
+                  </div>
+
+                  <div class="min-w-0">
+                    <label for="chapter-order"
+                           class="block text-sm font-bold text-[#6f6777]">
+                      章節順序
+                    </label>
+
+                    <input id="chapter-order"
+                           name="order"
+                           type="number"
+                           value="{{ chapter_order|default:'1' }}"
+                           min="1"
+                           max="32767"
+                           step="1"
+                           required
+                           class="mt-2 w-full rounded-xl border border-[#ded7e4] bg-white px-4 py-3">
+                  </div>
+                </div>
+
+                <button type="submit"
+                        class="mt-4 rounded-full bg-[#ead1d7] px-5 py-3 text-sm font-bold text-[#51404a] transition hover:bg-[#dfbec7]">
+                  ＋ 新增章節
+                </button>
+              </form>
+            {% endif %}
+
+            <ul class="mt-5 divide-y divide-[#e4dfe8]">
               {% for chapter in course.chapters.all %}
-                <li class="flex flex-col gap-2 py-4
-                  sm:flex-row sm:items-center sm:justify-between">
-                  <h3 class="font-semibold">
+                <li class="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <h3 class="min-w-0 break-words font-bold">
                     第 {{ chapter.order }} 章｜{{ chapter.name }}
                   </h3>
-                  <p class="text-sm text-[#77717e]">
+
+                  <p class="shrink-0 text-sm text-[#6f6777]">
                     建立於 {{ chapter.created_at|date:"Y 年 n 月 j 日" }}
                   </p>
                 </li>
               {% empty %}
-                <li class="py-4 text-sm text-[#77717e]">
-                  這門課程還沒有章節，可先到管理後台新增。
+                <li class="py-5 text-sm leading-7 text-[#6f6777]">
+                  這門課程還沒有章節，請使用上方表單新增。
                 </li>
               {% endfor %}
             </ul>
           </article>
 
-          <!-- 錯題與標籤 -->
-          <article class="rounded-2xl border border-[#e4dfe8]
-            bg-white/60 p-5 sm:col-span-2">
-            <h2 class="text-lg font-bold">錯題與標籤</h2>
+          <!-- 錯題管理 -->
+          <article class="min-w-0 rounded-2xl border border-[#e4dfe8] bg-white p-5 sm:col-span-2">
+            <h2 class="text-xl font-bold">錯題與標籤</h2>
 
             {% for chapter in course.chapters.all %}
-              <section class="mt-6">
-                <h3 class="font-semibold text-[#82748e]">
-                  第 {{ chapter.order }} 章｜{{ chapter.name }}
-                </h3>
+              <section class="mt-6 min-w-0 border-t border-[#e4dfe8] pt-6">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <h3 class="min-w-0 break-words text-lg font-bold text-[#756380]">
+                    第 {{ chapter.order }} 章｜{{ chapter.name }}
+                  </h3>
 
-                <ul class="mt-3 space-y-4">
+                  {% if user.is_authenticated and user.id == course.owner_id %}
+                    <a href="{% url 'learning:question-create' chapter.id %}"
+                       class="inline-flex w-fit shrink-0 rounded-full bg-[#ead1d7] px-4 py-2 text-sm font-bold text-[#51404a] transition hover:bg-[#dfbec7]">
+                      ＋ 新增錯題
+                    </a>
+                  {% endif %}
+                </div>
+
+                <ul class="mt-4 space-y-4">
                   {% for question in chapter.questions.all %}
-                    <li class="rounded-xl border border-[#e4dfe8] bg-white p-4">
-                      <h4 class="break-words font-bold">
+                    <li class="min-w-0 rounded-2xl border border-[#e4dfe8] p-4 sm:p-5">
+                      <h4 class="break-words text-lg font-bold">
                         {{ question.title }}
                       </h4>
 
-                      <div class="mt-3 flex flex-wrap gap-2">
+                      {% if question.content %}
+                        <div class="mt-4">
+                          <p class="text-sm font-bold text-[#756380]">
+                            題目內容
+                          </p>
+                          <p class="mt-2 whitespace-pre-wrap break-words text-sm leading-7">{{ question.content }}</p>
+                        </div>
+                      {% endif %}
+
+                      {% if question.error_reason %}
+                        <div class="mt-4 rounded-xl bg-[#f8f6fa] p-4">
+                          <p class="text-sm font-bold text-[#756380]">
+                            錯誤原因
+                          </p>
+                          <p class="mt-2 whitespace-pre-wrap break-words text-sm leading-7">{{ question.error_reason }}</p>
+                        </div>
+                      {% endif %}
+
+                      <ul aria-label="錯題標籤"
+                          class="mt-4 flex flex-wrap gap-2">
                         {% for tag in question.tags.all %}
-                          <span class="rounded-full border border-[#dfd5e5]
-                            bg-[#eee8f2] px-3 py-1 text-xs
-                            font-semibold text-[#776381]">
+                          <li class="max-w-full break-words rounded-full bg-[#eee8f2] px-3 py-1 text-xs font-bold text-[#756380]">
                             {{ tag.name }}
-                          </span>
+                          </li>
                         {% empty %}
-                          <span class="text-sm text-[#77717e]">
-                            這道錯題尚未設定標籤。
-                          </span>
+                          <li class="text-xs text-[#6f6777]">
+                            尚未設定標籤
+                          </li>
                         {% endfor %}
-                      </div>
+                      </ul>
+
+                      <p class="mt-4 text-xs text-[#6f6777]">
+                        建立於 {{ question.created_at|date:"Y 年 n 月 j 日 H:i" }}
+                      </p>
                     </li>
                   {% empty %}
-                    <li class="text-sm text-[#77717e]">
-                      這個章節還沒有錯題。
+                    <li class="py-3 text-sm leading-7 text-[#6f6777]">
+                      這個章節還沒有錯題，可點選「＋ 新增錯題」建立。
                     </li>
                   {% endfor %}
                 </ul>
               </section>
             {% empty %}
-              <p class="mt-4 text-sm text-[#77717e]">
-                這門課程尚未建立章節。
+              <p class="mt-4 text-sm leading-7 text-[#6f6777]">
+                請先在上方建立章節，再新增錯題。
               </p>
             {% endfor %}
           </article>
