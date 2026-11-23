@@ -1,0 +1,93 @@
+:root {
+  --page-bg: #fcfbff;
+  --surface: #ffffff;
+  --surface-subtle: #f4f0f8;
+  --primary-surface: #e7dcef;
+  --primary-surface-hover: #dccce8;
+  --border: #e8e0ee;
+  --text: #453c4d;
+  --text-muted: #746b7c;
+  --focus: #a98dbc;
+  --paper: var(--page-bg);
+  --ink: var(--text);
+  --muted: var(--text-muted);
+  --plum: var(--text-muted);
+  --plum-pale: var(--surface-subtle);
+  --rose: var(--primary-surface);
+  --rose-deep: var(--focus);
+  --sage: var(--surface-subtle);
+  --line: var(--border);
+  --card: var(--surface);
+}
+
+html,
+body {
+  background: var(--page-bg) !important;
+  color: var(--text) !important;
+}
+
+input,
+textarea,
+select {
+  border-color: var(--border) !important;
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+a:focus-visible,
+button:focus-visible {
+  outline-color: var(--focus) !important;
+  border-color: var(--focus) !important;
+}
+
+.paper-card,
+[class*="bg-white"] {
+  background-color: var(--surface) !important;
+}
+
+[class*="bg-[#f8f6fa]"],
+[class*="bg-[#eee8f2]"],
+[class*="bg-[#f0f3f0]"],
+[class*="bg-[#f0e7eb]"],
+[class*="bg-[#e7ece9]"] {
+  background-color: var(--surface-subtle) !important;
+}
+
+[class*="bg-[#ead1d7]"] {
+  background-color: var(--primary-surface) !important;
+}
+
+[class*="hover:bg-[#dfbec7]"]:hover,
+[class*="hover:bg-[#dfbcc6]"]:hover {
+  background-color: var(--primary-surface-hover) !important;
+}
+
+[class*="border-[#e4dfe8]"],
+[class*="border-[#ded7e4]"],
+[class*="border-[#d6cddc]"],
+[class*="border-[#dcbfc7]"],
+[class*="border-[#cfc5d6]"] {
+  border-color: var(--border) !important;
+}
+
+[class*="text-[#393741]"],
+[class*="text-[#51404a]"],
+[class*="text-[#57434c]"] {
+  color: var(--text) !important;
+}
+
+[class*="text-[#82748e]"],
+[class*="text-[#756380]"],
+[class*="text-[#77717e]"],
+[class*="text-[#6f6777]"],
+[class*="text-[#a49baa]"] {
+  color: var(--text-muted) !important;
+}
+
+.course-dot.sage,
+.course-dot.plum {
+  background-color: var(--focus) !important;
+}

@@ -1,22 +1,15 @@
-<!doctype html>
-<html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>登出｜StudyTrack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        margin: 0;
-        background: #f8f6fa;
-        color: #393741;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
-      }
-    </style>
-  </head>
+{% extends "core/base.html" %}
+{% load static %}
 
-  <body class="min-h-screen">
+{% block title %}登出｜StudyTrack{% endblock %}
+
+{% block body_class %}min-h-screen{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'final-study/css/account.css' %}">
+{% endblock %}
+
+{% block content %}
     <main class="mx-auto flex min-h-screen max-w-md items-center px-6 py-12">
       <section class="w-full rounded-3xl border border-[#e4dfe8] bg-white/90 p-6 shadow-sm sm:p-8">
         <a href="{% url 'learning:course-list' %}"
@@ -55,5 +48,4 @@
         </a>
       </section>
     </main>
-  </body>
-</html>
+{% endblock %}

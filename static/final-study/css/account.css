@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  background: #f8f6fa;
+  color: #393741;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+}
+
+form p {
+  margin-bottom: 1.25rem;
+}
+
+form label {
+  display: block;
+  margin-bottom: .5rem;
+  font-size: .875rem;
+  font-weight: 700;
+}
+
+form input:not([type="hidden"]):not([type="checkbox"]) {
+  box-sizing: border-box;
+  width: 100%;
+  padding: .75rem 1rem;
+  border: 1px solid #ded7e4;
+  border-radius: .75rem;
+  background: #fff;
+}
+
+form input:focus-visible {
+  outline: 2px solid #82748e;
+  outline-offset: 2px;
+}
+
+.helptext {
+  display: block;
+  margin-top: .5rem;
+  color: #6f6777;
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+form[action$="/login/"] input[type="checkbox"] {
+  margin-right: .4rem;
+  accent-color: #82748e;
+}
+
+form[action$="/login/"] .helptext a,
+form[action$="/login/"] p a {
+  color: #756380;
+  text-decoration: underline;
+}
+
+form[action$="/login/"] .errorlist {
+  margin-bottom: .75rem;
+  padding-left: 1.25rem;
+  color: #b42338;
+  font-size: .875rem;
+  line-height: 1.7;
+  list-style: disc;
+}
+
+form[action$="/signup/"] ul {
+  padding-left: 1.25rem;
+  font-size: .8rem;
+  line-height: 1.7;
+  list-style: disc;
+}
+
+form[action$="/signup/"] .errorlist {
+  margin-bottom: .75rem;
+  color: #b42338;
+}

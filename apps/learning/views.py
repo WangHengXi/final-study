@@ -1,24 +1,28 @@
+from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views import View
 
+from .course_list_cache import get_cached_course_payload, invalidate_course_list
 from .models import Chapter, Course, CourseSetting
 from .forms import CourseSettingForm, QuestionForm
+
+
+class JsonLoginRequiredMixin(LoginRequiredMixin):
+    def handle_no_permission(self):
+        return JsonResponse(
+            {"error": "authentication_required"},
+            status=401,
+        )
 
 
 class CourseListView(LoginRequiredMixin, View):
     def get(self, request):
         keyword = request.GET.get("q", "").strip()
 
-        courses = Course.objects.filter(
-            owner=request.user,
-        ).select_related("owner", "owner__profile")
-
-        if keyword:
-            courses = courses.filter(name__icontains=keyword)
-
         context = {
-            "courses": courses,
             "keyword": keyword,
         }
 
@@ -27,6 +31,73 @@ class CourseListView(LoginRequiredMixin, View):
             "learning/course_list.html",
             context,
         )
+
+
+class CourseDataView(JsonLoginRequiredMixin, View):
+    page_size = 10
+
+    def get(self, request):
+        keyword = request.GET.get("q", "").strip()
+        page_text = request.GET.get("page", "1")
+
+        try:
+            page_number = int(page_text)
+        except (TypeError, ValueError):
+            return JsonResponse({"error": "invalid_page"}, status=400)
+
+        if page_number < 1:
+            return JsonResponse({"error": "invalid_page"}, status=400)
+
+        payload = get_cached_course_payload(
+            user_id=request.user.id,
+            keyword=keyword,
+            page=page_number,
+            loader=lambda: self.build_payload(
+                request,
+                keyword,
+                page_number,
+            ),
+        )
+
+        return JsonResponse(payload)
+
+    def build_payload(self, request, keyword, page_number):
+        courses = Course.objects.filter(
+            owner=request.user,
+        ).select_related("owner", "owner__profile")
+
+        if keyword:
+            courses = courses.filter(name__icontains=keyword)
+
+        page = Paginator(courses, self.page_size).get_page(page_number)
+        items = []
+        for course in page.object_list:
+            profile = getattr(course.owner, "profile", None)
+            owner_display_name = (
+                profile.display_name
+                if profile and profile.display_name
+                else course.owner.username
+            )
+            items.append(
+                {
+                    "id": course.id,
+                    "name": course.name,
+                    "code": course.code,
+                    "owner_display_name": owner_display_name,
+                    "detail_url": reverse(
+                        "learning:course-detail",
+                        args=[course.id],
+                    ),
+                }
+            )
+
+        return {
+            "items": items,
+            "page": page.number,
+            "page_size": self.page_size,
+            "total_count": page.paginator.count,
+            "total_pages": page.paginator.num_pages,
+        }
 
 
 class CourseDetailView(LoginRequiredMixin, View):
@@ -100,6 +171,7 @@ class CourseCreateView(LoginRequiredMixin, View):
             code=code,
             owner=request.user,
         )
+        invalidate_course_list(request.user.id)
 
         return redirect(
             "learning:course-detail",

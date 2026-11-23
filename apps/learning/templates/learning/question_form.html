@@ -1,83 +1,15 @@
-<!doctype html>
-<html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>新增錯題｜StudyTrack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+{% extends "core/base.html" %}
+{% load static %}
 
-    <style>
-      body {
-        background: #f8f6fa;
-        color: #393741;
-        font-family: system-ui, -apple-system,
-          "Microsoft JhengHei", sans-serif;
-      }
+{% block title %}新增錯題｜StudyTrack{% endblock %}
 
-      form p {
-        margin-top: 1.5rem;
-      }
+{% block body_class %}min-h-screen{% endblock %}
 
-      form label {
-        display: block;
-        margin-bottom: .5rem;
-        font-weight: 700;
-      }
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'final-study/css/question-form.css' %}">
+{% endblock %}
 
-      form input[type="text"],
-      form textarea {
-        box-sizing: border-box;
-        width: 100%;
-        padding: .8rem 1rem;
-        border: 1px solid #ded7e4;
-        border-radius: .75rem;
-        background: white;
-      }
-
-      form textarea {
-        resize: vertical;
-      }
-
-      form input:focus-visible,
-      form textarea:focus-visible {
-        outline: 2px solid #82748e;
-        outline-offset: 2px;
-      }
-
-      .helptext {
-        display: block;
-        margin-top: .5rem;
-        color: #6f6777;
-        font-size: .875rem;
-      }
-
-      .errorlist {
-        margin-top: .75rem;
-        color: #b42338;
-        font-size: .875rem;
-      }
-
-      #id_tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .75rem;
-      }
-
-      #id_tags label {
-        margin: 0;
-        padding: .5rem .75rem;
-        border: 1px solid #ded7e4;
-        border-radius: .75rem;
-        font-weight: 400;
-      }
-
-      input[type="checkbox"] {
-        accent-color: #82748e;
-      }
-    </style>
-  </head>
-
-  <body class="min-h-screen">
+{% block content %}
     <main class="mx-auto max-w-2xl px-5 py-12">
       <a href="{% url 'learning:course-detail' chapter.course_id %}"
          class="text-sm font-bold text-[#756380] hover:underline">
@@ -107,5 +39,4 @@
         </form>
       </section>
     </main>
-  </body>
-</html>
+{% endblock %}

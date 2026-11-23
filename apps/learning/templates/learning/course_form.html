@@ -1,13 +1,11 @@
-<!doctype html>
-<html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>建立課程｜StudyTrack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
+{% extends "core/base.html" %}
+{% load static %}
 
-  <body class="min-h-screen bg-[#f8f6fa] text-[#393741]">
+{% block title %}建立課程｜StudyTrack{% endblock %}
+
+{% block body_class %}min-h-screen bg-[#f8f6fa] text-[#393741]{% endblock %}
+
+{% block content %}
     <main class="mx-auto max-w-xl px-6 py-16">
       <a
         href="{% url 'learning:course-list' %}"
@@ -93,5 +91,4 @@
         </form>
       </section>
     </main>
-  </body>
-</html>
+{% endblock %}

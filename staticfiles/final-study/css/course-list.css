@@ -1,0 +1,34 @@
+:root {
+  --paper: #f8f6fa;
+  --ink: #393741;
+  --line: #e4dfe8;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+    "PingFang TC", "Microsoft JhengHei", sans-serif;
+}
+
+.paper-card {
+  background: rgba(255, 253, 255, .9);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 36px rgba(71, 55, 83, .05);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #82748e;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    transform: none !important;
+  }
+}

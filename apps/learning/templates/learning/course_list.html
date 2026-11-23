@@ -1,50 +1,15 @@
-<!doctype html>
-<html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>課程列表｜StudyTrack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+{% extends "core/base.html" %}
+{% load static %}
 
-    <style>
-      :root {
-        --paper: #f8f6fa;
-        --ink: #393741;
-        --line: #e4dfe8;
-      }
+{% block title %}課程列表｜StudyTrack{% endblock %}
 
-      body {
-        margin: 0;
-        background: var(--paper);
-        color: var(--ink);
-        font-family: ui-sans-serif, system-ui, -apple-system,
-          BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
-          "PingFang TC", "Microsoft JhengHei", sans-serif;
-      }
+{% block body_class %}min-h-screen{% endblock %}
 
-      .paper-card {
-        background: rgba(255, 253, 255, .9);
-        border: 1px solid var(--line);
-        box-shadow: 0 12px 36px rgba(71, 55, 83, .05);
-      }
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'final-study/css/course-list.css' %}">
+{% endblock %}
 
-      a:focus-visible,
-      button:focus-visible,
-      input:focus-visible {
-        outline: 3px solid #82748e;
-        outline-offset: 4px;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        * {
-          transition: none !important;
-          transform: none !important;
-        }
-      }
-    </style>
-  </head>
-
-  <body class="min-h-screen">
+{% block content %}
     <main class="mx-auto max-w-4xl px-6 py-16 sm:px-10 sm:py-24">
 
         <header class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -61,38 +26,19 @@
             </div>
           
             <div class="flex flex-wrap items-center gap-3">
-              <span class="rounded-full border border-[#ded7e4] bg-white/50 px-4 py-2 text-sm font-bold text-[#6f6777]">
-                {{ courses|length }} 門課程
+              <span
+                id="course-count"
+                class="rounded-full border border-[#ded7e4] bg-white/50 px-4 py-2 text-sm font-bold text-[#6f6777]"
+                aria-live="polite"
+              >
+                載入課程中
               </span>
-          
-              {% if user.is_authenticated %}
-                <span class="break-words text-sm font-bold text-[#6f6777]">
-                  您好，{{ user.profile.display_name|default:user.username }}
-                </span>
-          
-                <form method="post" action="{% url 'account_logout' %}">
-                  {% csrf_token %}
-                  <button type="submit"
-                          class="rounded-full border border-[#ded7e4] px-4 py-2 text-sm font-bold text-[#756380] transition hover:bg-white">
-                    登出
-                  </button>
-                </form>
-              {% else %}
-                <a href="{% url 'account_signup' %}"
-                   class="rounded-full border border-[#ded7e4] px-4 py-2 text-sm font-bold text-[#756380] transition hover:bg-white">
-                  註冊
-                </a>
-          
-                <a href="{% url 'account_login' %}"
-                   class="rounded-full bg-[#ead1d7] px-4 py-2 text-sm font-bold text-[#51404a] transition hover:bg-[#dfbec7]">
-                  登入
-                </a>
-              {% endif %}
             </div>
           </header>
 
       <!-- 課程搜尋 -->
       <form
+        id="course-search-form"
         method="get"
         action="{% url 'learning:course-list' %}"
         class="paper-card mt-8 flex gap-2 rounded-2xl p-3"
@@ -116,70 +62,21 @@
         </button>
       </form>
 
-      {% if keyword %}
-        <div class="mt-5 flex flex-wrap items-center gap-3 text-sm">
-          <p class="text-[#77717e]">
-            「{{ keyword }}」的搜尋結果
-          </p>
-          <a
-            href="{% url 'learning:course-list' %}"
-            class="font-semibold text-[#82748e] underline underline-offset-4"
-          >
-            顯示全部課程
-          </a>
-        </div>
-      {% endif %}
-
       <!-- 課程列表 -->
-      <section class="mt-5 space-y-4" aria-label="課程列表">
-        {% for course in courses %}
-          <a
-            href="{% url 'learning:course-detail' course.id %}"
-            class="paper-card group block rounded-2xl p-5
-              transition hover:-translate-y-0.5 hover:border-[#c8b8d2]
-              hover:shadow-md sm:p-6"
-          >
-            <div class="flex items-center justify-between gap-4">
-              <div class="min-w-0">
-                <h2 class="break-words text-xl font-bold
-                  group-hover:text-[#82748e]">
-                  {{ course.name }}
-                </h2>
-                <p class="mt-2 break-all font-mono text-sm
-                  font-semibold tracking-wider text-[#77717e]">
-                  {{ course.code }}
-                </p>
-                <p class="mt-2 text-sm text-[#6f6777]">
-                    建立者：{{ course.owner.profile.display_name|default:course.owner.username }}
-                </p>
-              </div>
-
-              <span
-                class="shrink-0 text-xl text-[#a49baa] transition
-                  group-hover:translate-x-1 group-hover:text-[#82748e]"
-                aria-hidden="true"
-              >
-                →
-              </span>
-            </div>
-          </a>
-        {% empty %}
-          <div class="rounded-2xl border border-dashed border-[#cfc5d6]
-            bg-white/40 px-6 py-12 text-center">
-            {% if keyword %}
-              <p class="font-bold">目前沒有符合條件的課程。</p>
-              <p class="mt-2 text-sm text-[#77717e]">
-                試試其他關鍵字，或點選「顯示全部課程」。
-              </p>
-            {% else %}
-              <p class="font-bold">目前還沒有課程。</p>
-              <p class="mt-2 text-sm text-[#77717e]">
-                從第一門課開始，建立自己的學習紀錄。
-              </p>
-            {% endif %}
-          </div>
-        {% endfor %}
+      <p id="course-list-status" class="sr-only" role="status" aria-live="polite"></p>
+      <div id="course-list-error" class="mt-5" role="alert" hidden></div>
+      <section
+        id="course-list"
+        class="mt-5 space-y-4"
+        aria-label="課程列表"
+        aria-busy="true"
+        data-course-list
+        data-course-data-url="{% url 'learning:course-data' %}"
+        data-login-url="{% url 'account_login' %}"
+      >
+        <p class="course-list__loading">正在載入課程…</p>
       </section>
+      <nav id="course-pagination" class="mt-6" aria-label="課程分頁"></nav>
 
       <!-- 建立課程 -->
       <div class="mt-8 text-center">
@@ -195,5 +92,5 @@
       </div>
 
     </main>
-  </body>
-</html>
+    <script src="{% static 'final-study/js/course-list.js' %}" defer></script>
+{% endblock %}

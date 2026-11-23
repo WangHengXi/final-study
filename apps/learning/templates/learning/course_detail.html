@@ -1,36 +1,15 @@
-<!doctype html>
-<html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ course.name }}｜StudyTrack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+{% extends "core/base.html" %}
+{% load static %}
 
-    <style>
-      body {
-        margin: 0;
-        background: #f8f6fa;
-        color: #393741;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
-      }
+{% block title %}{{ course.name }}｜StudyTrack{% endblock %}
 
-      .paper-card {
-        background: rgba(255, 255, 255, .9);
-        border: 1px solid #e4dfe8;
-        box-shadow: 0 12px 36px rgba(65, 48, 75, .04);
-      }
+{% block body_class %}min-h-screen{% endblock %}
 
-      input:focus-visible,
-      a:focus-visible,
-      button:focus-visible {
-        outline: 2px solid #82748e;
-        outline-offset: 3px;
-      }
-    </style>
-  </head>
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'final-study/css/course-detail.css' %}">
+{% endblock %}
 
-  <body class="min-h-screen">
+{% block content %}
     <main class="mx-auto max-w-4xl px-5 py-12 sm:px-10 sm:py-20">
       <a href="{% url 'learning:course-list' %}"
          class="inline-flex items-center gap-2 text-sm font-bold text-[#756380] hover:underline">
@@ -293,5 +272,4 @@
         </div>
       </section>
     </main>
-  </body>
-</html>
+{% endblock %}

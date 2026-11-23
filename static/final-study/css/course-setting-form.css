@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  background: #f8f6fa;
+  color: #393741;
+  font-family: system-ui, -apple-system,
+    "Microsoft JhengHei", sans-serif;
+}
+
+form p {
+  margin-top: 1.5rem;
+}
+
+form label {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 700;
+}
+
+form input[type="number"] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: .8rem 1rem;
+  border: 1px solid #ded7e4;
+  border-radius: .75rem;
+  background: white;
+}
+
+form input:focus-visible {
+  outline: 2px solid #82748e;
+  outline-offset: 2px;
+}
+
+.helptext {
+  display: block;
+  margin-top: .5rem;
+  color: #6f6777;
+  font-size: .875rem;
+}
+
+.errorlist {
+  margin-top: .75rem;
+  color: #b42338;
+  font-size: .875rem;
+}

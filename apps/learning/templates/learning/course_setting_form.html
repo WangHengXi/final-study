@@ -1,60 +1,15 @@
-<!doctype html>
-<html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>課程學習設定｜StudyTrack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+{% extends "core/base.html" %}
+{% load static %}
 
-    <style>
-      body {
-        margin: 0;
-        background: #f8f6fa;
-        color: #393741;
-        font-family: system-ui, -apple-system,
-          "Microsoft JhengHei", sans-serif;
-      }
+{% block title %}課程學習設定｜StudyTrack{% endblock %}
 
-      form p {
-        margin-top: 1.5rem;
-      }
+{% block body_class %}min-h-screen{% endblock %}
 
-      form label {
-        display: block;
-        margin-bottom: .5rem;
-        font-weight: 700;
-      }
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'final-study/css/course-setting-form.css' %}">
+{% endblock %}
 
-      form input[type="number"] {
-        box-sizing: border-box;
-        width: 100%;
-        padding: .8rem 1rem;
-        border: 1px solid #ded7e4;
-        border-radius: .75rem;
-        background: white;
-      }
-
-      form input:focus-visible {
-        outline: 2px solid #82748e;
-        outline-offset: 2px;
-      }
-
-      .helptext {
-        display: block;
-        margin-top: .5rem;
-        color: #6f6777;
-        font-size: .875rem;
-      }
-
-      .errorlist {
-        margin-top: .75rem;
-        color: #b42338;
-        font-size: .875rem;
-      }
-    </style>
-  </head>
-
-  <body class="min-h-screen">
+{% block content %}
     <main class="mx-auto max-w-xl px-5 py-12">
       <a href="{% url 'learning:course-detail' course.id %}"
          class="text-sm font-bold text-[#756380] hover:underline">
@@ -90,5 +45,4 @@
         </form>
       </section>
     </main>
-  </body>
-</html>
+{% endblock %}

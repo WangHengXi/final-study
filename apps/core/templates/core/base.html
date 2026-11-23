@@ -1,0 +1,22 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}StudyTrack{% endblock %}</title>
+    {% block vendor_assets %}
+      <script src="https://cdn.tailwindcss.com"></script>
+    {% endblock %}
+    {% block page_css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'core/studytrack-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'core/navbar.css' %}">
+  </head>
+
+  <body class="{% block body_class %}{% endblock %}">
+    {% block navbar %}
+      {% include "core/includes/navbar.html" %}
+    {% endblock %}
+    {% block content %}{% endblock %}
+  </body>
+</html>

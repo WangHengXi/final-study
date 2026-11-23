@@ -1,66 +1,15 @@
-<!doctype html>
-<html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>註冊｜StudyTrack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        background: #f8f6fa;
-        color: #393741;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
-      }
+{% extends "core/base.html" %}
+{% load static %}
 
-      form p {
-        margin-bottom: 1.25rem;
-      }
+{% block title %}註冊｜StudyTrack{% endblock %}
 
-      form label {
-        display: block;
-        margin-bottom: .5rem;
-        font-size: .875rem;
-        font-weight: 700;
-      }
+{% block body_class %}min-h-screen{% endblock %}
 
-      form input:not([type="hidden"]):not([type="checkbox"]) {
-        box-sizing: border-box;
-        width: 100%;
-        padding: .75rem 1rem;
-        border: 1px solid #ded7e4;
-        border-radius: .75rem;
-        background: #fff;
-      }
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'final-study/css/account.css' %}">
+{% endblock %}
 
-      form input:focus-visible {
-        outline: 2px solid #82748e;
-        outline-offset: 2px;
-      }
-
-      .helptext {
-        display: block;
-        margin-top: .5rem;
-        color: #6f6777;
-        font-size: .8rem;
-        line-height: 1.6;
-      }
-
-      form ul {
-        padding-left: 1.25rem;
-        font-size: .8rem;
-        line-height: 1.7;
-        list-style: disc;
-      }
-
-      .errorlist {
-        margin-bottom: .75rem;
-        color: #b42338;
-      }
-    </style>
-  </head>
-
-  <body class="min-h-screen">
+{% block content %}
     <main class="mx-auto flex min-h-screen max-w-md items-center px-6 py-12">
       <section class="w-full rounded-3xl border border-[#e4dfe8] bg-white/90 p-6 shadow-sm sm:p-8">
         <a href="{% url 'learning:course-list' %}"
@@ -104,5 +53,4 @@
         </p>
       </section>
     </main>
-  </body>
-</html>
+{% endblock %}
