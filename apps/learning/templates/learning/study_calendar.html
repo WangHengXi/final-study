@@ -1,0 +1,59 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}讀書行事曆｜StudyTrack{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{% static 'final-study/css/study-calendar.css' %}">
+{% endblock %}
+
+{% block body_class %}study-calendar-page{% endblock %}
+
+{% block content %}
+  <main class="study-calendar shell" aria-labelledby="calendar-title">
+    <header class="study-calendar__header">
+      <div>
+        <p class="study-calendar__eyebrow">STUDY PLANNING</p>
+        <h1 id="calendar-title">讀書行事曆</h1>
+        <p>把每天要讀的內容放進清楚的位置。</p>
+      </div>
+      <a class="study-calendar__add" href="{% url 'learning:study-task-create' %}?date={{ display_month|date:'Y-m' }}-01">新增讀書事項</a>
+    </header>
+
+    <nav class="study-calendar__month-nav" aria-label="切換月份">
+      <a href="{% url 'learning:study-calendar' %}?month={{ previous_month|date:'Y-m' }}">← {{ previous_month|date:"Y 年 m 月" }}</a>
+      <h2>{{ display_month|date:"Y 年 m 月" }}</h2>
+      <a href="{% url 'learning:study-calendar' %}?month={{ next_month|date:'Y-m' }}">{{ next_month|date:"Y 年 m 月" }} →</a>
+    </nav>
+
+    <section class="study-calendar__grid" aria-label="{{ display_month|date:'Y 年 m 月' }} 行事曆">
+      {% for weekday in "日一二三四五六" %}
+        <div class="study-calendar__weekday" aria-hidden="true">{{ weekday }}</div>
+      {% endfor %}
+      {% for week in calendar_weeks %}
+        {% for cell in week %}
+          <article class="study-calendar__day{% if not cell.is_current_month %} study-calendar__day--outside{% endif %}">
+            <span class="study-calendar__date">{{ cell.date.day }}</span>
+            <ul class="study-calendar__tasks">
+              {% for task in cell.tasks %}
+                <li class="study-calendar__task">
+                  <a href="{% url 'learning:study-task-edit' task.id %}">{{ task.title }}</a>
+                  <form method="post" action="{% url 'learning:study-task-toggle' task.id %}">
+                    {% csrf_token %}
+                    <button type="submit">{% if task.is_completed %}標記未完成{% else %}完成{% endif %}</button>
+                  </form>
+                  <form method="post" action="{% url 'learning:study-task-delete' task.id %}">
+                    {% csrf_token %}
+                    <button type="submit">刪除</button>
+                  </form>
+                </li>
+              {% endfor %}
+            </ul>
+          </article>
+        {% endfor %}
+      {% endfor %}
+    </section>
+
+    <p class="study-calendar__helper">點選事項可編輯內容與日期。</p>
+  </main>
+{% endblock %}

@@ -1,13 +1,17 @@
-from django.core.paginator import Paginator
+from calendar import Calendar
+from collections import defaultdict
+from datetime import date, datetime, timedelta
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views import View
 
 from .course_list_cache import get_cached_course_payload, invalidate_course_list
-from .models import Chapter, Course, CourseSetting
-from .forms import CourseSettingForm, QuestionForm
+from .models import Chapter, Course, CourseSetting, StudyTask
+from .forms import CourseSettingForm, QuestionForm, StudyTaskForm
 
 
 class JsonLoginRequiredMixin(LoginRequiredMixin):
@@ -31,6 +35,185 @@ class CourseListView(LoginRequiredMixin, View):
             "learning/course_list.html",
             context,
         )
+
+
+class StudyCalendarView(LoginRequiredMixin, View):
+    template_name = "learning/study_calendar.html"
+
+    def get_display_month(self, month_value):
+        if month_value:
+            try:
+                if len(month_value) != 7 or month_value[4] != "-":
+                    raise ValueError
+                return datetime.strptime(month_value, "%Y-%m").date().replace(
+                    day=1
+                )
+            except (TypeError, ValueError):
+                pass
+        return date.today().replace(day=1)
+
+    def get(self, request):
+        display_month = self.get_display_month(request.GET.get("month"))
+        next_month = (display_month.replace(day=28) + timedelta(days=4)).replace(
+            day=1
+        )
+        previous_month = (display_month - timedelta(days=1)).replace(day=1)
+        tasks = StudyTask.objects.filter(
+            owner=request.user,
+            scheduled_date__gte=display_month,
+            scheduled_date__lt=next_month,
+        ).select_related("course")
+        tasks_by_date = defaultdict(list)
+        for task in tasks:
+            tasks_by_date[task.scheduled_date].append(task)
+
+        calendar_weeks = []
+        for week in Calendar(firstweekday=6).monthdatescalendar(
+            display_month.year,
+            display_month.month,
+        ):
+            calendar_weeks.append(
+                [
+                    {
+                        "date": day,
+                        "is_current_month": day.month == display_month.month,
+                        "tasks": tasks_by_date[day],
+                    }
+                    for day in week
+                ]
+            )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "display_month": display_month,
+                "previous_month": previous_month,
+                "next_month": next_month,
+                "calendar_weeks": calendar_weeks,
+            },
+        )
+
+
+class StudyTaskCreateView(LoginRequiredMixin, View):
+    template_name = "learning/study_task_form.html"
+
+    def get_initial(self, request):
+        date_value = request.GET.get("date")
+        if date_value:
+            try:
+                return {"scheduled_date": date.fromisoformat(date_value)}
+            except ValueError:
+                pass
+        return {"scheduled_date": date.today()}
+
+    def get(self, request):
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": StudyTaskForm(
+                    owner=request.user,
+                    initial=self.get_initial(request),
+                ),
+                "form_title": "新增讀書事項",
+            },
+        )
+
+    def post(self, request):
+        form = StudyTaskForm(request.POST, owner=request.user)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.owner = request.user
+            task.save()
+            return self.redirect_to_task_month(task)
+
+        return render(
+            request,
+            self.template_name,
+            {"form": form, "form_title": "新增讀書事項"},
+            status=400,
+        )
+
+    def redirect_to_task_month(self, task):
+        calendar_url = reverse("learning:study-calendar")
+        return redirect(
+            f"{calendar_url}?month={task.scheduled_date.strftime('%Y-%m')}"
+        )
+
+
+class StudyTaskEditView(StudyTaskCreateView):
+    def get_task(self, request, task_id):
+        return get_object_or_404(
+            StudyTask,
+            id=task_id,
+            owner=request.user,
+        )
+
+    def get(self, request, task_id):
+        task = self.get_task(request, task_id)
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": StudyTaskForm(owner=request.user, instance=task),
+                "form_title": "編輯讀書事項",
+                "task": task,
+            },
+        )
+
+    def post(self, request, task_id):
+        task = self.get_task(request, task_id)
+        form = StudyTaskForm(
+            request.POST,
+            owner=request.user,
+            instance=task,
+        )
+        if form.is_valid():
+            task = form.save()
+            return self.redirect_to_task_month(task)
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "form_title": "編輯讀書事項",
+                "task": task,
+            },
+            status=400,
+        )
+
+
+class StudyTaskActionMixin:
+    def get_task(self, request, task_id):
+        return get_object_or_404(
+            StudyTask,
+            id=task_id,
+            owner=request.user,
+        )
+
+    def redirect_to_task_month(self, task):
+        calendar_url = reverse("learning:study-calendar")
+        return redirect(
+            f"{calendar_url}?month={task.scheduled_date.strftime('%Y-%m')}"
+        )
+
+
+class StudyTaskToggleView(LoginRequiredMixin, StudyTaskActionMixin, View):
+    def post(self, request, task_id):
+        task = self.get_task(request, task_id)
+        task.is_completed = not task.is_completed
+        task.save(update_fields=["is_completed", "updated_at"])
+        return self.redirect_to_task_month(task)
+
+
+class StudyTaskDeleteView(LoginRequiredMixin, StudyTaskActionMixin, View):
+    def post(self, request, task_id):
+        task = self.get_task(request, task_id)
+        response = self.redirect_to_task_month(task)
+        task.delete()
+        return response
 
 
 class CourseDataView(JsonLoginRequiredMixin, View):

@@ -37,6 +37,37 @@ class Course(models.Model):
         return self.name
 
 
+class StudyTask(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="study_tasks",
+        verbose_name="安排者",
+    )
+    scheduled_date = models.DateField(verbose_name="安排日期")
+    title = models.CharField(max_length=120, verbose_name="讀書事項")
+    course = models.ForeignKey(
+        Course,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="study_tasks",
+        verbose_name="關聯課程",
+    )
+    notes = models.TextField(blank=True, verbose_name="備註")
+    is_completed = models.BooleanField(default=False, verbose_name="已完成")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
+
+    class Meta:
+        verbose_name = "讀書事項"
+        verbose_name_plural = "讀書事項"
+        ordering = ("scheduled_date", "is_completed", "created_at")
+
+    def __str__(self):
+        return self.title
+
+
 class CourseSetting(models.Model):
     course = models.OneToOneField(
         Course,

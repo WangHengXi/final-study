@@ -1,0 +1,202 @@
+.study-calendar-page {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans TC", sans-serif;
+}
+
+.study-calendar {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 56px 0 88px;
+}
+
+.study-calendar__header,
+.study-calendar__month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.study-calendar__header h1,
+.study-calendar__month-nav h2 {
+  margin: 0;
+  color: var(--text);
+}
+
+.study-calendar__header p:not(.study-calendar__eyebrow) {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+}
+
+.study-calendar__eyebrow {
+  margin: 0 0 8px;
+  color: var(--primary);
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.study-calendar__add,
+.study-calendar__month-nav a {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.study-calendar__add {
+  border: 1px solid var(--primary);
+  border-radius: var(--button-radius);
+  background: var(--primary-surface);
+  padding: 11px 18px;
+}
+
+.study-calendar__add:hover,
+.study-calendar__add:focus-visible {
+  background: var(--primary-surface-hover);
+}
+
+.study-calendar__month-nav a:hover,
+.study-calendar__task button:hover {
+  color: var(--text);
+}
+
+.study-calendar__month-nav {
+  margin-top: 40px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+}
+
+.study-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+}
+
+.study-calendar__weekday,
+.study-calendar__day {
+  min-width: 0;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.study-calendar__weekday:nth-child(7n),
+.study-calendar__day:nth-child(7n) {
+  border-right: 0;
+}
+
+.study-calendar__weekday {
+  background: var(--surface-subtle);
+  padding: 10px;
+  color: var(--text-muted);
+  font-size: .8rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.study-calendar__day {
+  min-height: 116px;
+  padding: 10px;
+  background: var(--surface);
+}
+
+.study-calendar__day--outside {
+  background: var(--page-bg);
+  color: var(--text-muted);
+}
+
+.study-calendar__date {
+  font-weight: 800;
+}
+
+.study-calendar__tasks {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.study-calendar__tasks li {
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--surface-subtle);
+  margin-top: 5px;
+  padding: 3px 6px;
+  color: var(--text);
+  font-size: .78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.study-calendar__task form { display: inline; }
+.study-calendar__task button { border: 0; background: transparent; color: var(--primary); cursor: pointer; font: inherit; font-size: .68rem; padding: 0 2px; }
+
+.study-calendar__helper {
+  margin: 24px 0 0;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.study-task-form {
+  max-width: 720px;
+  padding-block: 48px 72px;
+}
+
+.study-task-form__back {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.study-task-form__panel {
+  margin-top: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--surface);
+  padding: clamp(24px, 5vw, 44px);
+}
+
+.study-task-form__panel h1 {
+  margin: 8px 0 28px;
+  color: var(--text);
+}
+
+.study-task-form__fields {
+  display: grid;
+  gap: 20px;
+}
+
+.study-task-form__field {
+  display: grid;
+  gap: 8px;
+}
+
+.study-task-form__field label {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.study-task-form__field input,
+.study-task-form__field select,
+.study-task-form__field textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.study-task-form__field p {
+  margin: 0;
+  color: var(--error-text);
+  font-size: .9rem;
+}
+
+@media (max-width: 680px) {
+  .study-calendar { width: min(100% - 28px, 1120px); padding-top: 32px; }
+  .study-calendar__header, .study-calendar__month-nav { align-items: flex-start; flex-direction: column; }
+  .study-calendar__month-nav { width: 100%; }
+  .study-calendar__day { min-height: 82px; padding: 6px; }
+  .study-calendar__weekday { padding: 7px 2px; }
+  .study-calendar__tasks li { padding: 2px 4px; font-size: .67rem; }
+}

@@ -71,7 +71,7 @@
 
               {% if user.is_authenticated and user.id == course.owner_id %}
                 <a href="{% url 'learning:course-setting' course.id %}"
-                   class="rounded-full bg-[#ead1d7] px-4 py-2 text-sm font-bold text-[#51404a] hover:bg-[#dfbec7]">
+                   class="theme-action rounded-full px-4 py-2 text-sm font-bold">
                   {% if course.learning_setting %}
                     修改設定
                   {% else %}
@@ -127,8 +127,7 @@
                 <h3 class="font-bold">新增章節</h3>
 
                 {% if chapter_error %}
-                  <p role="alert"
-                     class="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                  <p role="alert" class="theme-error mt-3 px-4 py-3 text-sm">
                     {{ chapter_error }}
                   </p>
                 {% endif %}
@@ -169,7 +168,7 @@
                 </div>
 
                 <button type="submit"
-                        class="mt-4 rounded-full bg-[#ead1d7] px-5 py-3 text-sm font-bold text-[#51404a] transition hover:bg-[#dfbec7]">
+                        class="theme-action mt-4 rounded-full px-5 py-3 text-sm font-bold transition">
                   ＋ 新增章節
                 </button>
               </form>
@@ -207,7 +206,7 @@
 
                   {% if user.is_authenticated and user.id == course.owner_id %}
                     <a href="{% url 'learning:question-create' chapter.id %}"
-                       class="inline-flex w-fit shrink-0 rounded-full bg-[#ead1d7] px-4 py-2 text-sm font-bold text-[#51404a] transition hover:bg-[#dfbec7]">
+                       class="theme-action inline-flex w-fit shrink-0 rounded-full px-4 py-2 text-sm font-bold transition">
                       ＋ 新增錯題
                     </a>
                   {% endif %}

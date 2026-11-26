@@ -153,68 +153,82 @@ tests:
 ---
 ### Requirement: Authenticated navigation
 
-The default shared navbar SHALL give authenticated users access to the StudyTrack home page, their course list, and a safe logout action without requiring a UserProfile.
+The default shared navbar SHALL give authenticated users access to the StudyTrack home page, their study dashboard, study calendar, course list, and a safe logout action without requiring a UserProfile.
 
 #### Scenario: An authenticated user without a UserProfile views a learning page
 
 - **WHEN** an authenticated Django user without a UserProfile requests a course list page they are authorized to access
 - **THEN** the response renders successfully
-- **AND** the navbar contains links to the home page and course list
-- **AND** the navbar contains a POST logout form with a CSRF token.
+- **AND THEN** the navbar contains links to the home page, study dashboard, study calendar, and course list
+- **AND THEN** it contains a POST logout form with a CSRF token.
 
 ##### Example: User without a profile can navigate
 
 - **GIVEN** an authenticated user named `no-profile-user` has no UserProfile and requests `/learning/courses/`
 - **WHEN** Django renders the response
 - **THEN** the response status is 200
-- **AND** the navbar contains links to `/` and `/learning/courses/`
-- **AND** it contains a POST form targeting `/accounts/logout/` with `csrfmiddlewaretoken`.
+- **AND THEN** the navbar contains links to `/`, the study dashboard, `/learning/calendar/`, and `/learning/courses/`
+- **AND THEN** it contains a POST form targeting `/accounts/logout/` with `csrfmiddlewaretoken`.
 
 
 <!-- @trace
-source: shared-core-navbar
-updated: 2026-11-16
+source: refresh-landing-and-add-study-calendar
+updated: 2026-11-26
 code:
   - apps/core/templates/core/includes/navbar.html
-  - static/final-study/css/course-setting-form.css
-  - static/final-study/css/question-form.css
-  - apps/core/static/core/navbar.css
-  - AGENTS.md
-  - static/final-study/css/account.css
+  - staticfiles/core/studytrack-theme.1548516580d0.css.gz
+  - staticfiles/final-study/js/course-list.f6e433f1b9fb.js.gz
+  - apps/core/views.py
   - apps/learning/templates/learning/question_form.html
-  - .agents/skills/spectra-discuss/SKILL.md
-  - .agents/skills/spectra-debug/SKILL.md
-  - .agents/skills/spectra-audit/SKILL.md
-  - templates/account/logout.html
-  - static/final-study/css/course-detail.css
-  - apps/core/templates/core/base.html
-  - apps/learning/templates/learning/course_list.html
-  - .agents/skills/spectra-propose/SKILL.md
-  - CLAUDE.md
-  - .agents/skills/spectra-apply/SKILL.md
-  - templates/account/signup.html
-  - templates/account/login.html
-  - apps/learning/templates/learning/course_detail.html
-  - .agents/skills/spectra-ingest/SKILL.md
-  - .agents/skills/spectra-review/SKILL.md
-  - config/settings/base.py
-  - .agents/skills/spectra-commit/SKILL.md
-  - .agents/skills/spectra-analyze/SKILL.md
-  - apps/core/static/core/studytrack-theme.css
-  - static/final-study/css/course-list.css
-  - .agents/skills/spectra-verify/SKILL.md
-  - .spectra.yaml
-  - apps/core/templates/core/home.html
-  - .agents/skills/spectra-drift/SKILL.md
+  - apps/core/templates/core/dashboard.html
   - apps/learning/templates/learning/course_setting_form.html
-  - apps/learning/templates/learning/course_form.html
-  - apps/core/tests.py
-  - .agents/skills/spectra-archive/SKILL.md
+  - static/final-study/css/study-calendar.css
+  - staticfiles/final-study/css/course-list.665fc8c21769.css.gz
+  - staticfiles/final-study/js/course-list.f6e433f1b9fb.js
+  - apps/learning/urls.py
+  - apps/core/static/core/studytrack-theme.css
+  - staticfiles/facebook/js/fbconnect.7274cde18d11.js.gz
+  - staticfiles/final-study/css/course-list.css.gz
+  - staticfiles/staticfiles.json
   - static/final-study/css/home.css
-  - static/final-study/js/.gitkeep
+  - staticfiles/final-study/css/study-calendar.css.gz
+  - apps/learning/models.py
+  - apps/core/urls.py
+  - config/settings/dev.py
+  - staticfiles/core/studytrack-theme.css
+  - apps/learning/templates/learning/study_task_form.html
+  - staticfiles/core/studytrack-theme.1548516580d0.css
+  - staticfiles/final-study/css/home.css.gz
+  - staticfiles/core/studytrack-theme.css.gz
+  - staticfiles/final-study/css/home.6d88c3e6e35b.css
+  - staticfiles/final-study/css/home.css
+  - staticfiles/final-study/js/course-list.js.gz
+  - apps/core/tests.py
+  - apps/learning/forms.py
+  - apps/learning/tests.py
+  - apps/core/static/core/navbar.css
+  - staticfiles/final-study/css/study-calendar.css
+  - staticfiles/facebook/js/fbconnect.7274cde18d11.js
+  - staticfiles/final-study/css/course-list.665fc8c21769.css
+  - apps/learning/views.py
+  - config/settings/base.py
+  - staticfiles/facebook/js/fbconnect.js
+  - apps/learning/templates/learning/course_detail.html
+  - apps/learning/templates/learning/study_calendar.html
+  - staticfiles/facebook/js/fbconnect.js.gz
+  - .env.example
+  - apps/core/templates/core/home.html
+  - staticfiles/final-study/css/study-calendar.ace1e748b3f7.css.gz
+  - staticfiles/final-study/css/course-list.css
+  - staticfiles/final-study/css/study-calendar.ace1e748b3f7.css
+  - apps/learning/templates/learning/course_form.html
+  - apps/learning/migrations/0007_studytask.py
+  - apps/learning/templates/learning/course_list.html
+  - staticfiles/final-study/css/home.6d88c3e6e35b.css.gz
+  - staticfiles/final-study/js/course-list.js
 tests:
-  - apps/core/test_static_assets.py
   - apps/core/test_navigation.py
+  - apps/core/test_visual_theme.py
 -->
 
 ---

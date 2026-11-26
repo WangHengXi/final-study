@@ -1,15 +1,14 @@
-from django.http import HttpResponse, JsonResponse
-from django.views import View
-from django.views.generic import TemplateView
 from django.shortcuts import redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
+from django.views import View
+
+from apps.learning.models import StudyTask
 
 class GoHomeView(View):
     def get(self, request):
         return redirect("core:home")
-
-
-class HomeView(TemplateView):
-    template_name = "core/home.html"
 
 
 class TextResponseView(View):
@@ -33,6 +32,24 @@ class JsonResponseView(View):
 class HomeView(View):
     def get(self, request):
         return render(request, "core/home.html")
+
+
+class OverviewView(LoginRequiredMixin, View):
+    def get(self, request):
+        today = timezone.localdate()
+        today_tasks = StudyTask.objects.filter(
+            owner=request.user,
+            scheduled_date=today,
+        ).select_related("course")
+        return render(
+            request,
+            "core/dashboard.html",
+            {
+                "today": today,
+                "incomplete_tasks": today_tasks.filter(is_completed=False),
+                "completed_tasks": today_tasks.filter(is_completed=True),
+            },
+        )
 
 class GreetingView(View):
     def get(self, request):

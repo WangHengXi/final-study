@@ -90,9 +90,14 @@ AUTHENTICATION_BACKENDS = [
 ]
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
-LOGIN_REDIRECT_URL = "learning:course-list"
+LOGIN_REDIRECT_URL = "core:overview"
 LOGOUT_REDIRECT_URL = "learning:course-list"
 LOGIN_URL = "account_login"
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
 
 ROOT_URLCONF = "config.urls"
 

@@ -8,11 +8,41 @@ from .views import (
     CourseListView,
     QuestionCreateView,
     CourseSettingUpdateView,
+    StudyCalendarView,
+    StudyTaskCreateView,
+    StudyTaskDeleteView,
+    StudyTaskEditView,
+    StudyTaskToggleView,
 )
 
 app_name = "learning"
 
 urlpatterns = [
+    path(
+        "calendar/",
+        StudyCalendarView.as_view(),
+        name="study-calendar",
+    ),
+    path(
+        "calendar/tasks/create/",
+        StudyTaskCreateView.as_view(),
+        name="study-task-create",
+    ),
+    path(
+        "calendar/tasks/<int:task_id>/edit/",
+        StudyTaskEditView.as_view(),
+        name="study-task-edit",
+    ),
+    path(
+        "calendar/tasks/<int:task_id>/toggle/",
+        StudyTaskToggleView.as_view(),
+        name="study-task-toggle",
+    ),
+    path(
+        "calendar/tasks/<int:task_id>/delete/",
+        StudyTaskDeleteView.as_view(),
+        name="study-task-delete",
+    ),
     path(
         "courses/",
         CourseListView.as_view(),

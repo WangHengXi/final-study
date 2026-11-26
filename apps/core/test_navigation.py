@@ -26,6 +26,10 @@ class SharedNavigationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'data-testid="shared-navbar"')
         self.assertContains(response, f'href="{reverse("core:home")}"')
+        self.assertContains(response, "備考 Overview")
+        self.assertContains(response, "複習分析（即將推出）")
+        self.assertContains(response, f'href="{reverse("core:overview")}"')
+        self.assertContains(response, f'href="{reverse("learning:study-calendar")}"')
         self.assertContains(response, f'href="{reverse("learning:course-list")}"')
         self.assertContains(
             response,
@@ -43,6 +47,6 @@ class SharedNavigationTests(TestCase):
             response,
             f'href="{static("core/navbar.css")}"',
         )
-        self.assertContains(response, "把每一次練習，收進自己的節奏。")
+        self.assertContains(response, "把散落的備考，")
         self.assertNotContains(response, 'data-testid="shared-navbar"')
         self.assertNotContains(response, "https://cdn.tailwindcss.com")

@@ -1,6 +1,22 @@
 from django import forms
 
-from .models import CourseSetting, Question
+from .models import Course, CourseSetting, Question, StudyTask
+
+
+class StudyTaskForm(forms.ModelForm):
+    def __init__(self, *args, owner, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["course"].queryset = Course.objects.filter(owner=owner)
+
+    class Meta:
+        model = StudyTask
+        fields = ["scheduled_date", "title", "course", "notes"]
+        widgets = {
+            "scheduled_date": forms.DateInput(attrs={"type": "date"}),
+            "title": forms.TextInput(attrs={"maxlength": 120}),
+            "notes": forms.Textarea(attrs={"rows": 4}),
+        }
+
 
 class QuestionForm(forms.ModelForm):
     class Meta:

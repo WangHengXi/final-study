@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}{{ form_title }}｜StudyTrack{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{% static 'final-study/css/study-calendar.css' %}">
+{% endblock %}
+
+{% block body_class %}study-calendar-page{% endblock %}
+
+{% block content %}
+  <main class="study-task-form shell" aria-labelledby="study-task-form-title">
+    <a class="study-task-form__back" href="{% url 'learning:study-calendar' %}">← 回到讀書行事曆</a>
+    <section class="study-task-form__panel">
+      <p class="study-calendar__eyebrow">DAILY STUDY PLAN</p>
+      <h1 id="study-task-form-title">{{ form_title }}</h1>
+      <form method="post" class="study-task-form__fields" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% for field in form %}
+          <div class="study-task-form__field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <p role="alert">{{ field.errors|striptags }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button class="study-calendar__add" type="submit">儲存事項</button>
+      </form>
+    </section>
+  </main>
+{% endblock %}
